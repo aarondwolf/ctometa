@@ -11,7 +11,7 @@
 
 {title:Syntax}
 
-	{cmd:ctometa} {cmd:using} {it:{help filename}} [{cmd:,} {opt k:eep(namelist)} {opt nop:reserve} {opt nov:allabels}]
+	{cmd:ctometa} {cmd:using} {it:{help filename}} [{cmd:,} {opt k:eep(namelist)} {opt nop:reserve} {opt nov:allabels} {opt v:arlabels}]
 
 
 {title:Description}
@@ -24,7 +24,9 @@ relevance expressions, etc.
 {pstd}
 For {it: select_one} variables, {cmd: ctometa} creates a new set of value 
 labels by pulling from the {it: choices} sheet in the SurveyCTO XLSForm. The 
-command does not, by default, assign those value labels to existing variables.
+command does not, by default, assign those value labels to existing variables. 
+The option {opt v:arlabels} can be specified to attach the SurveyCTO variable
+labels to each variable.
 
 {pstd}
 The command also pulls value labels from the {it: choices} sheet and applys the
@@ -84,6 +86,8 @@ field present in your SurveyCTO XLSForm is acceptable.
 	{bf:Note}: colons should disappear. E.g. {it:label:hindi} should become {it:labelhindi}.
 
 {phang}{opt nov:allabels} prevents {cmd:ctometa} from re-labelling existing variables.
+
+{phang}{opt v:arlabels} prevents {cmd:ctometa} from re-labelling existing variables.
 
 {phang}{opt nop:reserve} Programmer's option. You will be left with the "survey" sheet.
 
