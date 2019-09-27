@@ -25,6 +25,8 @@ qui {
 			}
 	}
 	
+
+	
 *===============================================================================*
 *																				*
 *		SECTION 1: 	Main survey questions										*
@@ -35,6 +37,10 @@ qui {
 	* Keep type, name and specified variables. Keep all by default.
 	if "`keep'" != "" keep type name `keep'
 	else keep _all
+	
+	* Preserve sort order
+	gen sort = _n
+	
 	
 	* Remove begin/end group/repeat, and notes
 	drop if inlist(type,"begin group","begin repeat","end group","end repeat","note")
@@ -54,7 +60,7 @@ qui {
 	if `r(N)' > 0 {
 	
 		* Get list of variables to write to metadata
-		ds type name, not
+		ds type name sort, not
 		local vlist `r(varlist)'
 		
 		* Split type to get type and list
@@ -125,7 +131,8 @@ qui {
 		if _rc == 0 erase `metadata'
 		
 		file open metadata using `metadata', write
-			
+		sort sort
+		drop sort
 		qui count
 		foreach x of varlist type list `vlist' type_* list_* name {
 			replace `x' = subinstr(subinstr(subinstr(`x',"\${","[",.),"}","]",.),"`=char(10)'"," ",.)
@@ -224,8 +231,10 @@ qui {
 			joinby list using `multiple'
 			order type name list value label
 			sort name list value label
-			gen variable = subinstr(name + "_" + string(value),"-","_",.)
-			
+			cap confirm numeric variable value
+				if _rc == 0 gen variable = subinstr(name + "_" + string(value),"-","_",.)
+				else gen variable = subinstr(name + "_" + value,"-","_",.)
+				
 			foreach label of local labels {
 				replace `label' = name + "=" + `label'
 			}	
@@ -266,8 +275,9 @@ qui {
 		file close metadata
 
 
-
+		
 		if "`preserve'" != "nopreserve" restore
+		else use `svymeta', clear
 		*/
 		* Run metadata .do file
 		qui do `metadata'
