@@ -1,4 +1,4 @@
-*! version 1.0.2  21aug2019 Aaron Wolf, aaron.wolf@yale.edu
+*! version 1.0.3  2jan2020 Aaron Wolf, aaron.wolf@yale.edu
 cap program drop ctometa
 program define ctometa, rclass
 
@@ -232,7 +232,7 @@ qui {
 			order type name list value label
 			sort name list value label
 			cap confirm numeric variable value
-				if _rc == 0 gen variable = subinstr(name + "_" + string(value),"-","_",.)
+				if !_rc gen variable = subinstr(name + "_" + string(value),"-","_",.)
 				else gen variable = subinstr(name + "_" + value,"-","_",.)
 				
 			foreach label of local labels {
@@ -301,7 +301,7 @@ qui {
 			qui ds, has(char CTO_label)
 			if "`r(varlist)'" != "" {
 				foreach var of varlist `r(varlist)' {
-					la var `var' "``var'[CTO_label]'"
+					la var `var' `"``var'[CTO_label]'"'
 				}
 			}
 		}
