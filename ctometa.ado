@@ -135,6 +135,11 @@ qui {
 		drop sort
 		qui count
 		foreach x of varlist type list `vlist' type_* list_* name {
+			cap confirm string variable `x'
+			if _rc {
+				tostring `x', replace
+				replace `x' = "" if `x' == "."
+			}
 			replace `x' = subinstr(subinstr(subinstr(`x',"\${","[",.),"}","]",.),"`=char(10)'"," ",.)
 			replace `x' = "cap char " + name + "[CTO_`x'] " + `x' if !missing(`x')
 			forvalues i = 1/`r(N)' {
