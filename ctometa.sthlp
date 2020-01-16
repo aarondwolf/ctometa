@@ -103,13 +103,13 @@ in your current directory:
 {pstd}
 To pull all metadata fields as characteristics, type:
 
-        {cmd:.} {cmd: ctoform using example.xlsx}
+        {cmd:.} {cmd: ctometa using example.xlsx}
 		
 {pstd}
 If you only want to add the characteristics for {it:type}, {it:label}, {it:label:hindi}, 
 and {it:relevance}, you would specify:
 
-        {cmd:.} {cmd: ctoform using example.xlsx, keep(type label labelhindi relevance)}
+        {cmd:.} {cmd: ctometa using example.xlsx, keep(type label labelhindi relevance)}
 		
 {pstd}
 To create a variable list containing all variables of the type {it:select_one}, 

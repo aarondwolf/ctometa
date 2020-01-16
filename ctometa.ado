@@ -134,6 +134,7 @@ qui {
 		sort sort
 		drop sort
 		qui count
+		local n = `r(N)'
 		foreach x of varlist type list `vlist' type_* list_* name {
 			cap confirm string variable `x'
 			if _rc {
