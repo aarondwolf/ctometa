@@ -143,10 +143,11 @@ qui {
 			}
 			replace `x' = subinstr(subinstr(subinstr(`x',"\${","[",.),"}","]",.),"`=char(10)'"," ",.)
 			replace `x' = "cap char " + name + "[CTO_`x'] " + `x' if !missing(`x')
-			forvalues i = 1/`r(N)' {
+			forvalues i = 1/`n' {
 				file write metadata (`x'[`i']) _n
 			}
 		}
+		
 		
 	*===============================================================================*
 	*																				*
