@@ -84,23 +84,27 @@ qui {
 		
 //		Adjust metadata for selected() relevance criteria
 		* Count number of "selected(" expressions
+		* Count number of "selected(" expressions
 		replace relevance = subinstr(stritrim(relevance),", ",",",.)
 		replace relevance = subinstr(relevance," )",")",.)
-		gen count = (strlen(relevance)-strlen(subinstr(relevance,"selected","",.)))/strlen("selected")
+		replace relevance = subinstr(relevance,"'","",.)
+		gen count = (strlen(relevance)-strlen(subinstr(relevance,"selected","",.)))/strlen("selected")	
 		sum count
+		
 		
 		* Loop over all possible selected expressions and replace with expression for split variable equivalent
 		forvalues i = 1/`r(max)' {
-			gen exp`i' = regexs(0) if regexm(relevance,"selected\(\\$\{[A-Za-z0-9_]+\},([-]?[0-9]+)\)")
-			gen part1_`i' = regexs(1) if regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([-]?[0-9]+)(\))")
-			gen part2_`i' = regexs(2) if regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([-]?[0-9]+)(\))")
-			gen part3_`i' = regexs(3) if regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([-]?[0-9]+)(\))")
-			gen part4_`i' = regexs(4) if regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([-]?[0-9]+)(\))")
-			gen part5_`i' = regexs(5) if regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([-]?[0-9]+)(\))")
+			gen exp`i' = regexs(0) if 		regexm(relevance,"selected\(\\$\{[A-Za-z0-9_]+\},([']?[-]?[0-9]+[']?)\)")
+			gen part1_`i' = regexs(1) if 	regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([']?[-]?[0-9]+[']?)(\))")
+			gen part2_`i' = regexs(2) if 	regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([']?[-]?[0-9]+[']?)(\))")
+			gen part3_`i' = regexs(3) if 	regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([']?[-]?[0-9]+[']?)(\))")
+			gen part4_`i' = regexs(4) if 	regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([']?[-]?[0-9]+[']?)(\))")
+			gen part5_`i' = regexs(5) if 	regexm(relevance,"(selected\(\\$\{)([A-Za-z0-9_]+)(\},)([']?[-]?[0-9]+[']?)(\))")
 			gen new`i' = part2_`i' + "_" + subinstr(part4_`i',"-","_",.) + "=1"
 			replace relevance = subinstr(relevance,exp`i',new`i',.)
 			drop exp`i' part?_`i' new`i'
 		}
+
 		
 //		Adjust relevance criteria for remaining expressions
 		* Remaining relevance cleaning		
