@@ -41,6 +41,12 @@ qui {
 	* Preserve sort order
 	gen sort = _n
 	
+	* Trim all variables to ensure extra spaces don't cause errors
+	qui ds, has(type string)
+	foreach var of varlist `r(varlist)' {
+		replace `var' = strtrim(stritrim(`var'))
+	}
+	
 	
 	* Remove begin/end group/repeat, and notes
 	drop if inlist(type,"begin group","begin repeat","end group","end repeat","note")
@@ -52,7 +58,6 @@ qui {
 	foreach name of local insheet {
 		replace keepname = 1 if name == "`name'"
 	}
-	
 	keep if keepname == 1
 	drop keepname
 	
@@ -81,7 +86,6 @@ qui {
 		foreach list of local lists {
 			gen list_`list' = "1" if list == "`list'"
 		}
-		
 //		Adjust metadata for selected() relevance criteria
 		* Count number of "selected(" expressions
 		* Count number of "selected(" expressions
@@ -160,7 +164,6 @@ qui {
 	*===============================================================================*
 		
 		
-		
 		* Isolate list of select_multiple variable to use relevant choices list
 		use `svymeta', clear
 		
@@ -177,6 +180,12 @@ qui {
 		* Load choices
 		import excel `using', sheet(choices) firstrow clear
 		rename list_name list
+		
+		* Trim all variables to ensure extra spaces don't cause errors
+		qui ds, has(type string)
+		foreach var of varlist `r(varlist)' {
+			replace `var' = strtrim(stritrim(`var'))
+		}
 		
 		tempfile choices
 		save `choices'
