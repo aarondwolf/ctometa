@@ -25,8 +25,6 @@ qui {
 			}
 	}
 	
-
-	
 *===============================================================================*
 *																				*
 *		SECTION 1: 	Main survey questions										*
@@ -36,7 +34,35 @@ qui {
 	
 	* Keep type, name and specified variables. Keep all by default.
 	if "`keep'" != "" keep type name `keep'
-	else keep _all
+	else {
+	    ds label*
+		local labels `r(varlist)'
+		gettoken label: labels
+		
+		ds hint*
+		local hints `r(varlist)'
+		gettoken hint: hints
+		
+	    keep type name `label' `hint'
+	}
+	
+//	Isolate label variable
+	* Ensure only one label was selected
+	ds label*
+	local language = subinstr("`r(varlist)'","label","",.)
+	if wordcount("`r(varlist)'") > 1 {
+		di as error "You must keep only one label language"
+		exit 198			
+	}
+	rename label label
+	
+	cap ds hint*
+	if _rc ==0 & wordcount("`r(varlist)'") > 1 {
+		di as error "You must keep only one hint language"
+		exit 198			
+	}
+	cap rename hint hint	
+	
 	
 	* Preserve sort order
 	gen sort = _n
@@ -65,7 +91,7 @@ qui {
 	if `r(N)' > 0 {
 	
 		* Get list of variables to write to metadata
-		ds type name sort, not
+		ds type name sort label, not
 		local vlist `r(varlist)'
 		
 		* Split type to get type and list
@@ -143,7 +169,7 @@ qui {
 		drop sort
 		qui count
 		local n = `r(N)'
-		foreach x of varlist type list `vlist' type_* list_* name {
+		foreach x of varlist type list label `vlist' type_* list_* name {
 			cap confirm string variable `x'
 			if _rc {
 				tostring `x', replace
@@ -180,6 +206,18 @@ qui {
 		* Load choices
 		import excel `using', sheet(choices) firstrow clear
 		rename list_name list
+		keep list value label`language'
+		rename label label
+		
+		* Ensure only one label was selected
+		ds label*
+		local language = subinstr("`r(varlist)'","label","",.)
+		if wordcount("`r(varlist)'") > 1 {
+			di as error "You must keep only one label language"
+			exit 198			
+		}
+		rename label label
+
 		
 		* Trim all variables to ensure extra spaces don't cause errors
 		qui ds, has(type string)
@@ -202,18 +240,10 @@ qui {
 		gen sort = _n
 		sort list sort
 		
-		* Select the first "label" variable as the default
-		ds label*
-		local choicelabels `r(varlist)'
-		
-		if "`keep'" == "" local labels `choicelabels'
-		else local labels: list choicelabels & keep
-		
-		gettoken default: labels
 		
 		* Create vallabel variable
 		cap tostring value, replace
-		gen vallabel = "cap label define " + list + " " + value + " " + `"""' + `default' + `"""' + ", modify"
+		gen vallabel = "cap label define " + list + " " + value + " " + `"""' + label + `"""' + ", modify"
 		replace vallabel = subinstr(subinstr(subinstr(vallabel,"\${","[",.),"}","]",.),"`=char(10)'"," ",.)
 		
 		* Write to file
@@ -225,15 +255,6 @@ qui {
 			
 	//	Choices - select_multiple metadata
 		use `choices', clear
-		
-		* Keep labels that were specified in keep earlier
-		ds label*
-		local choicelabels `r(varlist)'
-		
-		if "`keep'" == "" local labels `choicelabels'
-		else local labels: list choicelabels & keep	
-		
-		keep list value `labels'
 		
 		* Keep only lists used by survey
 		gen keeplist = 0
@@ -329,7 +350,7 @@ qui {
 	}
 }
 	* Return local macros with types and lists used	
-	return local types `"`types'"'
-	return local lists `"`lists'"'
+	return local types 		`"`types'"'
+	return local lists 		`"`lists'"'
 
 end
