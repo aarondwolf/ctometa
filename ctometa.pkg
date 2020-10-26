@@ -1,0 +1,8 @@
+v 1.1
+d ctometa.  A Stata command to pull apply metadata from a SurveyCTO XLSForm file to a Stata dataset.
+d Created by Aaron Wolf (aaron.wolf@yale.edu)
+d
+d Note: ctometa is still a work in progress. Please feel free to comment and contribute at https://github.com/aarondwolf/ctometa.
+
+F ctometa.ado
+F ctometa.sthlp

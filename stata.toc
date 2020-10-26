@@ -1,0 +1,11 @@
+v 1.1
+d Created by Aaron Wolf (aaron.wolf@yale.edu)
+
+d 	Installation instructions:
+d	net install ctometa, from("https://aarondwolf.github.io/ctometa") replace
+d
+d	ctometa is still a work in progress.
+d Please feel free to comment and contribute at https://github.com/aarondwolf/ctometa.
+
+
+p ctometa A Stata command to pull apply metadata from a SurveyCTO XLSForm file to a Stata dataset.
