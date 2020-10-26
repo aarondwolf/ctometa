@@ -1,10 +1,10 @@
-*! version 1.0.3  2jan2020 Aaron Wolf, aaron.wolf@yale.edu
+*! version 1.0.4  7aug2020 Aaron Wolf, aaron.wolf@yale.edu
 cap program drop ctometa
 program define ctometa, rclass
 
 	version 15
 	
-	syntax using [, Keep(namelist) noPreserve noVallabels noVarlabels]
+	syntax using [, Keep(namelist) noPreserve noVALlabels noVARlabels]
 	
 	if "`preserve'" != "nopreserve"  preserve
 qui {	
@@ -107,10 +107,18 @@ qui {
 			gen type_`type' = "1" if type == "`type'"
 		}
 		
+		* Ensure list has proper Stata names
+		replace list = subinstr(list,"-","_",.)
+		
 		* Create new extended list variable for each list
 		levelsof list, local(lists)
 		foreach list of local lists {
-			gen list_`list' = "1" if list == "`list'"
+			cap confirm name `list'
+			if _rc {
+				di as error "`list' is not a valid Stata name."
+				confirm name `list'
+			}
+			else gen list_`list' = "1" if list == "`list'"
 		}
 //		Adjust metadata for selected() relevance criteria
 		* Count number of "selected(" expressions
@@ -228,6 +236,9 @@ qui {
 		tempfile choices
 		save `choices'
 		
+		* Ensure list has proper Stata names
+		replace list = subinstr(list,"-","_",.)
+
 		* Keep only lists that are used by the survey
 		gen keeplist = 0
 		foreach list of local lists {
@@ -240,7 +251,6 @@ qui {
 		gen sort = _n
 		sort list sort
 		
-		
 		* Create vallabel variable
 		cap tostring value, replace
 		gen vallabel = "cap label define " + list + " " + value + " " + `"""' + label + `"""' + ", modify"
@@ -252,7 +262,6 @@ qui {
 			file write metadata (vallabel[`i']) _n
 		}
 		
-			
 	//	Choices - select_multiple metadata
 		use `choices', clear
 		
@@ -333,12 +342,13 @@ qui {
 			qui ds, has(char CTO_type_select_one)
 			if "`r(varlist)'" != "" {
 				foreach var of varlist `r(varlist)' {
+					cap destring `var', replace
 					la val `var' ``var'[CTO_list]'
 				}
 			}
 		}
 		
-		if "`varlabels'" != "varlabels" {
+		if "`varlabels'" != "novarlabels" {
 			qui ds, has(char CTO_label)
 			if "`r(varlist)'" != "" {
 				foreach var of varlist `r(varlist)' {

@@ -11,7 +11,7 @@
 
 {title:Syntax}
 
-	{cmd:ctometa} {cmd:using} {it:{help filename}} [{cmd:,} {opt k:eep(namelist)} {opt nop:reserve} {opt nov:allabels} {opt v:arlabels}]
+	{cmd:ctometa} {cmd:using} {it:{help filename}} [{cmd:,} {opt k:eep(namelist)} {opt nop:reserve} {opt noval:labels} {opt novar:labels}]
 
 
 {title:Description}
@@ -85,11 +85,11 @@ field present in your SurveyCTO XLSForm is acceptable.
 
 	{bf:Note}: colons should disappear. E.g. {it:label:hindi} should become {it:labelhindi}.
 
-{phang}{opt nov:allabels} prevents {cmd:ctometa} from re-labelling existing variables.
+{phang}{opt noval:labels} prevents {cmd:ctometa} from re-labelling existing variable values using the {it:choices} sheet.
 
-{phang}{opt v:arlabels} prevents {cmd:ctometa} from re-labelling existing variables.
+{phang}{opt novar:labels} prevents {cmd:ctometa} from re-labelling existing variables using the specified {it:label}.
 
-{phang}{opt nop:reserve} Programmer's option. You will be left with the "survey" sheet.
+{phang}{opt nop:reserve} Programmer's option. You will be left with the "survey" sheet (useful for debugging).
 
 
 {title:Examples}
