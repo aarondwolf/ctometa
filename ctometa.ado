@@ -1,4 +1,4 @@
-*! version 1.0.4  7aug2020 Aaron Wolf, aaron.wolf@yale.edu
+*! version 1.0.4  7aug2020 Aaron Wolf, aaron.wolf@u.northwestern.edu
 cap program drop ctometa
 program define ctometa, rclass
 

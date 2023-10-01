@@ -126,6 +126,6 @@ No acknowledgements as of yet.
 
 {title:Authors}
 
-{pstd}Aaron Wolf, Partners in Health{p_end}
-{pstd}awolf@pih.org{p_end}
+{pstd}Aaron Wolf, Northwestern University{p_end}
+{pstd}aaron.wolf@u.northwestern.edu{p_end}
 
